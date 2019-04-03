@@ -1,23 +1,8 @@
 import React, { Component } from 'react';
 import { Platform, Image, StyleSheet, View, Text, TouchableOpacity} from 'react-native'
+import { Header } from "react-navigation";
 
-
-class CmpHeader extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            rol:'asd',
-            nombre:'asdasd',
-            visibilityClose:false
-        };
-    }
-
-    
-    onclick = () => {
-        this.props.navigation.push('Home')
-    };
-
-    render() {
+const CmpHeader = props =>  {
         return (
             <View >
                 <View style={styles.header}>
@@ -28,7 +13,7 @@ class CmpHeader extends Component {
                             </TouchableOpacity>
                         </View>
                         <View style={{ width: '70%' }}>
-                            <Text style={styles.texto}>{this.props.text}</Text>
+                            <Header {...props} />
                         </View>
                     </View>
      
@@ -37,7 +22,7 @@ class CmpHeader extends Component {
             </View>
         )
     }
-}
+
 
 const styles = StyleSheet.create({
     header:

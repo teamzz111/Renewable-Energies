@@ -1,28 +1,37 @@
 
 import React from "react";
-import { View, Text } from "react-native";
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import  HomeScreen  from "./screens/HomeScreen";
 import CmpHeader from "./screens/staticComponent/Header";
-
+import MenuTSM from "./screens/MenuTSM";
 
 const AppNavigator = createStackNavigator(
   {
-    Inicio: {
+    Home: {
       screen: HomeScreen,
-      navigationOptions:{
-        title: "Seleccione una opción",
-        header: <CmpHeader text = "BIENVENIDO, SELECCIONE UNA OPCIÓN" />
-      }
+    },
+    Menu:{
+      screen: MenuTSM,
     }
 
   },
   { // Se establece n los parametros para la pila de pantallas
-    initialRouteName: "Inicio", // Ruta inicial (pantalla inicio por defecto)
+    initialRouteName: "Home", // Ruta inicial (pantalla inicio por defecto)
     defaultNavigationOptions: {
+      header: props => <CmpHeader {...props} />,
+      title: "SELECCIONE UNA OPCIÓN",
       headerStyle: {
-       
-      }
+        backgroundColor: 'transparent',
+        marginLeft: -15,
+        width: '120%'
+      },
+      headerTitleStyle: {
+        fontWeight: "300",
+        color: "#fff",
+        fontSize: 15
+      },
+      headerTintColor: "#fff",
+      animationEnabled: true
     },
   }
 );
