@@ -1,5 +1,5 @@
 import React, {} from 'react';
-import {Text, View, StyleSheet, FlatList, BackHandler, Alert} from 'react-native';
+import {Text, View, StyleSheet, FlatList, BackHandler, Alert, Image} from 'react-native';
 
 export default class HomeScreen extends React.Component  {
 
@@ -7,8 +7,8 @@ export default class HomeScreen extends React.Component  {
     super(props);
     this.state = {
         users: [{
-          name: "Jefa lusa",
-          email: "chipala@gmail.com"
+          name: "Tiempo Solar Verdadero ",
+          email: "Calculadora que se encarga de calcular el TSM recibiendo múltiples parámetros."
         }]
     };
 }
@@ -43,6 +43,7 @@ export default class HomeScreen extends React.Component  {
           showsVerticalScrollIndicator={false}
           renderItem={({item}) =>
           <View style={styles.flatview}>
+            <Image source = {require('../resources/energia-solar.png')} />
             <Text style={styles.name}>{item.name}</Text>
             <Text style={styles.email}>{item.email}</Text>
           </View>
