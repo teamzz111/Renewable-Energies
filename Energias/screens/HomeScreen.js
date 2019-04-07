@@ -18,6 +18,18 @@ export default class HomeScreen extends React.Component  {
           title: "Corrección por longitud",
           description: "Calculadora encargada de hallar la corrección por longitud",
           route: 2
+        },{
+          title: "Ángulo Horario",
+          description: "Calculadora encargada de hallar el ángulo horario",
+          route: 3
+        }, {
+          title: "Ángulos Solares Derivados",
+          description: "Calculadora encargada de hallar cénit, altitud, y azimut",
+          route: 4
+        }, {
+          title: "Declinación",
+          description: "Calculadora encargada de hallar la declinación.",
+          route: 5
         }]
     };
 }
@@ -39,6 +51,15 @@ export default class HomeScreen extends React.Component  {
       }
       case 2:{
         return require('../resources/calculadora.png');
+      }
+      case 3:{
+        return require('../resources/despertador.png');
+      }
+      case 4:{
+        return require('../resources/mundial.png');
+      }
+      case 5:{
+        return require('../resources/gobernante.png');
       }
       default: break;
     }
