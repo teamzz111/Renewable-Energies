@@ -1,5 +1,5 @@
 import React, {} from 'react';
-import {Text, View, StyleSheet, FlatList, BackHandler, Alert, Image} from 'react-native';
+import {Text, View, StyleSheet, FlatList, BackHandler, Alert, Image, PixelRatio} from 'react-native';
 
 export default class HomeScreen extends React.Component  {
 
@@ -7,8 +7,17 @@ export default class HomeScreen extends React.Component  {
     super(props);
     this.state = {
         users: [{
-          name: "Tiempo Solar Verdadero ",
-          email: "Calculadora que se encarga de calcular el TSM recibiendo múltiples parámetros."
+          title: "Tiempo Solar Verdadero ",
+          description: "Calculadora que se encarga de calcular el TSM recibiendo múltiples parámetros.",
+          route: 0
+        },{
+          title: "Irradiancia Solar",
+          description: "Calculadora que se encarga de hallar la irradiancia solar reflejada, difusa y directa.",
+          route: 1
+        },{
+          title: "Corrección por longitud",
+          description: "Calculadora encargada de hallar la corrección por longitud",
+          route: 2
         }]
     };
 }
@@ -20,6 +29,20 @@ export default class HomeScreen extends React.Component  {
     BackHandler.removeEventListener('hardwareBackPress', this.backButtonClick);
   }
 
+  getImage = (id) => {
+    switch(id){
+      case 0:{
+        return require('../resources/energia-solar.png');
+      }
+      case 1:{
+        return require('../resources/panelsolar.png');
+      }
+      case 2:{
+        return require('../resources/calculadora.png');
+      }
+      default: break;
+    }
+  }
   backButtonClick() {
 
     Alert.alert(
@@ -43,9 +66,11 @@ export default class HomeScreen extends React.Component  {
           showsVerticalScrollIndicator={false}
           renderItem={({item}) =>
           <View style={styles.flatview}>
-            <Image source = {require('../resources/energia-solar.png')} />
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.email}>{item.email}</Text>
+              <Image style={styles.img} source={this.getImage(item.route)} />
+              <View style = {styles.father}>  
+                <Text style={styles.name}>{item.title}</Text>
+                <Text style={styles.email}>{item.description}</Text>
+            </View>
           </View>
           }
           keyExtractor={item => item.email}
@@ -58,23 +83,37 @@ export default class HomeScreen extends React.Component  {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    marginTop: 1,
+    padding: 8
   },
   flatview: {
-    justifyContent: 'center',
-    paddingTop: 30,
-    borderRadius: 2,
+    justifyContent: 'flex-end',
+    flex: 1,
+    flexDirection: 'row',
+    width: '100%',
+    padding: 6,
+    paddingBottom: 19,
+    borderBottomWidth: 1 / PixelRatio.get(),
+    borderColor: 'black'
   },
   name: {
-    fontFamily: 'Verdana',
-    fontSize: 18
+    fontSize: 16,
+    color: 'rgba(0, 0, 0, 0.8)'
   },
   email: {
-    color: 'red'
+    fontSize: 12,
+    color: 'rgba(0, 0, 0, 0.4)'
+  },
+  img: {
+    width: 65,
+    height: 65,
+    marginTop: 8
+  },
+  father: {
+    flex: 1,
+    width: '70%',
+    marginTop: 8,
+    marginLeft: 5
   }
-  
 });
 
