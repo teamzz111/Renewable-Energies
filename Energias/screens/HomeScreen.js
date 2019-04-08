@@ -1,5 +1,6 @@
 import React, {} from 'react';
-import {Text, View, StyleSheet, FlatList, BackHandler, Alert, Image, PixelRatio} from 'react-native';
+import { Text, View, StyleSheet, FlatList, BackHandler, Alert, Image, PixelRatio, TouchableOpacity} from 'react-native';
+
 
 export default class HomeScreen extends React.Component  {
 
@@ -8,7 +9,7 @@ export default class HomeScreen extends React.Component  {
     this.state = {
         users: [{
           title: "Tiempo Solar Verdadero ",
-          description: "Calculadora que se encarga de calcular el TSM recibiendo múltiples parámetros.",
+          description: "Calculadora que se encarga de calcular el TSV recibiendo múltiples parámetros.",
           route: 0
         },{
           title: "Irradiancia Solar",
@@ -33,13 +34,8 @@ export default class HomeScreen extends React.Component  {
         }]
     };
 }
-  componentWillMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.backButtonClick);
-  }
+  _keyExtractor = (item, index) => item.id;
 
-  componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.backButtonClick);
-  }
 
   getImage = (id) => {
     switch(id){
@@ -64,21 +60,15 @@ export default class HomeScreen extends React.Component  {
       default: break;
     }
   }
-  backButtonClick() {
 
-    Alert.alert(
-      "Confirme",
-      "¿Desea salir de la aplicación?",
-      [
-        { text: 'No', onPress: () => { return false } },
-        { text: 'Si, cerrar', onPress: () => BackHandler.exitApp()},
-      ],
-      { cancelable: false },
-    )
-    return true;
+  onclick = (id) => {
+    let data = {
+      id
+    }
 
-  }
-
+    this.props.navigation.push('Menu', data)
+  
+  };
   render() {
     return (
       <View style={styles.container} >
@@ -86,13 +76,15 @@ export default class HomeScreen extends React.Component  {
           data={this.state.users}
           showsVerticalScrollIndicator={false}
           renderItem={({item}) =>
-          <View style={styles.flatview}>
-              <Image style={styles.img} source={this.getImage(item.route)} />
-              <View style = {styles.father}>  
-                <Text style={styles.name}>{item.title}</Text>
-                <Text style={styles.email}>{item.description}</Text>
-            </View>
-          </View>
+            <TouchableOpacity onPress={(id) => this.onclick(item.route)}>
+              <View style={styles.flatview}>
+                  <Image style={styles.img} source={this.getImage(item.route)} />
+                  <View style = {styles.father}>  
+                    <Text style={styles.name}>{item.title}</Text>
+                    <Text style={styles.email}>{item.description}</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
           }
           keyExtractor={item => item.email}
         />

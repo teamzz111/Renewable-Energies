@@ -1,6 +1,7 @@
 
 import React from "react";
 import { createStackNavigator, createAppContainer } from "react-navigation";
+import { BackHandler, Alert } from "react-native";
 import  HomeScreen  from "./screens/HomeScreen";
 import CmpHeader from "./screens/staticComponent/Header";
 import MenuTSM from "./screens/MenuTSM";
@@ -12,7 +13,13 @@ const AppNavigator = createStackNavigator(
     },
     Menu:{
       screen: MenuTSM,
-    }
+          navigationOptions: ({
+            navigation
+          }) => ({
+            title: "TSV",
+          }),
+    },
+    
 
   },
   { // Se establece n los parametros para la pila de pantallas
@@ -39,6 +46,36 @@ const AppNavigator = createStackNavigator(
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
+
+  componentWillMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.backButtonClick);
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.backButtonClick);
+  }
+  backButtonClick() {
+    Alert.alert(
+      "Confirme",
+      "¿Desea salir de la aplicación?",
+      [{
+          text: 'No',
+          onPress: () => {
+            return false
+          }
+        },
+        {
+          text: 'Si, cerrar',
+          onPress: () => BackHandler.exitApp()
+        },
+      ], {
+        cancelable: false
+      },
+    )
+
+    return true;
+
+  }
   render() {
     return <AppContainer />;
   }
