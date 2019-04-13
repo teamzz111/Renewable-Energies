@@ -5,13 +5,13 @@ import { BackHandler, Alert } from "react-native";
 import  HomeScreen  from "./screens/HomeScreen";
 import CmpHeader from "./screens/staticComponent/Header";
 import MenuTSM from "./screens/MenuTSM";
-
+import MenuIrra from "./screens/HomeIrradiancia";
 const AppNavigator = createStackNavigator(
   {
     Home: {
       screen: HomeScreen,
     },
-    Menu:{
+    TSM:{
       screen: MenuTSM,
           navigationOptions: ({
             navigation
@@ -19,16 +19,23 @@ const AppNavigator = createStackNavigator(
             title: "TSV",
           }),
     },
-    
+    IrradianciaMenu:{
+      screen: MenuIrra,
+          navigationOptions: ({
+            navigation
+          }) => ({
+            title: "SELECCIONE UNA OPCIÓN",
+          }),
+    },
 
   },
   { // Se establece n los parametros para la pila de pantallas
-    initialRouteName: "Menu", // Ruta inicial (pantalla inicio por defecto)
+    initialRouteName: "Home", // Ruta inicial (pantalla inicio por defecto)
     defaultNavigationOptions: {
       header: props => <CmpHeader {...props} />,
       title: "SELECCIONE UNA OPCIÓN",
       headerStyle: {
-        backgroundColor: 'transparent',
+        backgroundColor: 'transparent',   
         marginLeft: -15,
         width: '120%'
       },

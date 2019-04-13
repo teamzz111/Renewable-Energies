@@ -9,70 +9,30 @@ export default class HomeScreen extends React.Component  {
     super(props);
     this.state = {
         users: [{
-          title: "Tiempo Solar Verdadero ",
-          description: "Calculadora que se encarga de calcular el TSV recibiendo múltiples parámetros.",
+          title: "Irradiancia Difusa ",
+          description: "Calculadora que se encarga de hallar la irradiancia difusa.",
           route: 0
         },{
-          title: "Irradiancia Solar",
-          description: "Calculadora que se encarga de hallar la irradiancia solar reflejada, difusa y directa.",
+          title: "Irradiancia Directa ",
+          description: "Calculadora que se encarga de hallar la irradiancia directa.",
           route: 1
         },{
-          title: "Corrección por longitud",
-          description: "Calculadora encargada de hallar la corrección por longitud",
+          title: "Irradiancia Reflejada",
+          description: "Calculadora que se encarga de hallar la irradiancia reflejada.",
           route: 2
-        },{
-          title: "Ángulo Horario",
-          description: "Calculadora encargada de hallar el ángulo horario",
-          route: 3
-        }, {
-          title: "Ángulos Solares Derivados",
-          description: "Calculadora encargada de hallar cénit, altitud, y azimut",
-          route: 4
-        }, {
-          title: "Declinación",
-          description: "Calculadora encargada de hallar la declinación.",
-          route: 5
         }]
     };
-}
-  _keyExtractor = (item, index) => item.id;
-
-
-  getImage = (id) => {
-    switch(id){
-      case 0:{
-        return require('../resources/energia-solar.png');
-      }
-      case 1:{
-        return require('../resources/panelsolar.png');
-      }
-      case 2:{
-        return require('../resources/calculadora.png');
-      }
-      case 3:{
-        return require('../resources/despertador.png');
-      }
-      case 4:{
-        return require('../resources/mundial.png');
-      }
-      case 5:{
-        return require('../resources/gobernante.png');
-      }
-      default: break;
-    }
   }
+  _keyExtractor = (item, index) => item.id;
 
   onClickPut = (id) => {
     switch(id){
       case 0:{
-        this.props.navigation.push('TSM');
-        break;
-      }
-      case 1:{
-        this.props.navigation.push('IrradianciaMenu');
+        
         break;
       }
     }
+    return true;
   
   };
   render() {
@@ -84,7 +44,7 @@ export default class HomeScreen extends React.Component  {
           renderItem={({item}) =>
             <TouchableOpacity onPress={(id) => this.onClickPut(item.route)}>
               <View style={styles.flatview}>
-                  <Image style={styles.img} source={this.getImage(item.route)} />
+                  <Image style={styles.img} source={require('../resources/panelsolar.png')} />
                   <View style = {styles.father}>  
                     <Text style={styles.name}>{item.title}</Text>
                     <Text style={styles.email}>{item.description}</Text>
