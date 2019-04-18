@@ -10,72 +10,26 @@ export default class HomeScreen extends React.Component  {
       date2: "",
       date3: "",
       months:["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio","Agosto","Septiembre", "Octubre", "Noviembre", "Diciembre"] ,
-      languague: ""
+      languague: "",
+      options: false,
+      selected:  true,
+      renderOption: true
+
       
   }
 }
-  
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style = {styles.text}> Selecciona la fecha </Text>
-        <View style = {styles.datepicker}>
-        
-      <DatePicker
-        style={{width: 200}}
-        date={this.state.date2}
-        mode="date"
-        placeholder="Selecciona una fecha"
-        format="YYYY-MM-DD"
-        minDate="2019-05-01"
-        maxDate="2019-06-01"
-        confirmBtnText="Confirm"
-        cancelBtnText="Cancel"
-        customStyles={{
-          dateIcon: {
-            position: 'absolute',
-            left: 0,
-            top: 4,
-            marginLeft: 0
-          },
-          dateInput: {
-            marginLeft: 36
-          }
-          // ... You can check the source to find the other keys.
-        }}
-        onDateChange={(date) => {this.setState({date2: date})}}
-      />
-            <DatePicker
-        style={{width: 200, marginTop: 10}}
-        date={this.state.date3}
 
-        mode = "time"
-        placeholder="Selecciona la hora"
-        format = "HH:mm"
-        minDate="2019-05-01"
-        maxDate="2019-06-01"
-        confirmBtnText="Confirm"
-        cancelBtnText="Cancel"
-        customStyles={{
-          dateIcon: {
-            position: 'absolute',
-            left: 0,
-            top: 4,
-            marginLeft: 0
-          },
-          dateInput: {
-            marginLeft: 36
-          }
-          // ... You can check the source to find the other keys.
-        }}
-        onDateChange={(date) => {this.setState({date3: date})}}
-      />
-          <Text style={styles.text}> ¿Cómo te gustaría ingresar este dato? </Text>
-          <View>
+  renderOptions = () => {
+    if(this.state.renderOption){
+      return (          
+        <View style = {{flex: 1, marginTop: 10, alignItems: 'center'}}>
+        <Text style={styles.text}> ¿Cómo te gustaría ingresar este dato? </Text>
             <TouchableNativeFeedback
-              onPress={this._onPressButton}
+              onPress = {
+                () => this.setState({options: true, renderOption: false})
+              }
               background={TouchableNativeFeedback.SelectableBackground()}>
-              <View style={{ width: 220, height: 30, backgroundColor: 'red', marginTop: 6 }}>
+              <View style={{ width: 220, height: 30, backgroundColor: 'red', marginTop: 24 }}>
                 <Text style={{ margin: 3, color: "white", textAlign: 'center'}}>Elegir lugar</Text>
               </View>
             </TouchableNativeFeedback>
@@ -95,25 +49,88 @@ export default class HomeScreen extends React.Component  {
             </TouchableNativeFeedback>
 
           </View>
-          <View style = {styles.datepicker}> 
-            <Text style={styles.text}> Bien.. Buena decisión, selecciona el lugar </Text>
-            <Picker
-              selectedValue={this.state.language}
-              style={{ height: 50, width: 200 }}
-              onValueChange={(itemValue, itemIndex) =>
-                this.setState({ language: itemValue })
-              }>
-              <Picker.Item label="Bogotá" value="java" />
-              <Picker.Item label="Santiago de Chile" value="js" />
-            </Picker>
-          </View>
+
+);
+    }
+  }
+  renderPlace = () => {
+    if(this.state.options){
+      return(
+        <View style = {styles.datepicker}> 
+        <Text style={styles.text}> Bien.. Buena decisión, selecciona el lugar </Text>
+        <Picker
+        selectedValue={this.state.language}
+        style={{ height: 50, width: 200 }}
+        onValueChange={(itemValue, itemIndex) =>
+          this.setState({ language: itemValue })
+        }>
+        <Picker.Item label="Bogotá" value="java" />
+        <Picker.Item label="Santiago de Chile" value="js" />
+        </Picker>
+    </View>);
+    }
+  }
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style = {styles.text}> Selecciona la fecha </Text>
+        <View style = {styles.datepicker}>
+        
+        <DatePicker
+          style={{width: 200}}
+          date={this.state.date2}
+          mode="date" 
+          placeholder="Selecciona una fecha"
+          format="YYYY-MM-DD"
+          minDate="2019-05-01"
+          maxDate="2019-06-01"
+          confirmBtnText="Confirm"
+          cancelBtnText="Cancel"
+          customStyles={{
+            dateIcon: {
+              position: 'absolute',
+              left: 0,
+              top: 4,
+              marginLeft: 0
+            },
+            dateInput: {
+              marginLeft: 36
+            }
+            // ... You can check the source to find the other keys.
+          }}
+          onDateChange={(date) => {this.setState({date2: date})}}
+        />
+        <DatePicker
+          style={{width: 200, marginTop: 10}}
+          date={this.state.date3}
+
+          mode = "time"
+          placeholder="Selecciona la hora"
+          format = "HH:mm"
+          minDate="2019-05-01"
+          maxDate="2019-06-01"
+          confirmBtnText="Confirm"
+          cancelBtnText="Cancel"
+          customStyles={{
+            dateIcon: {
+              position: 'absolute',
+              left: 0,
+              top: 4,
+              marginLeft: 0
+            },
+            dateInput: {
+              marginLeft: 36
+            }
+            // ... You can check the source to find the other keys.
+          }}
+          onDateChange={(date) => {this.setState({date3: date})}}
+        />
+      </View>
+      {this.renderOptions()}
+      {this.renderPlace()}
           <View style = {styles.datepicker}>
               <Text style = {styles.text}>Ok. Ingresa los datos</Text>
-              <View>
-
-              </View>
            </View>
-          </View>
       </View>
     );
   }

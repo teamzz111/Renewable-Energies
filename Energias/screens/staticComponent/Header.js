@@ -3,24 +3,27 @@ import { Platform, Image, StyleSheet, View, Text, TouchableOpacity} from 'react-
 import { Header } from "react-navigation";
 
 const CmpHeader = props =>  {
-        return (
-            <View >
-                <View style={styles.header}>
-                    <View style={styles.zonaLogo}>
-                        <View style={{ width: '18%' }}>
-                            <TouchableOpacity onPress={this.onclick} style={styles.touchable}>
-                                <Image source={require('../../resources/img_logo_header.png')} style={styles.imgHeader} />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{ width: '70%' }}>
-                            <Header {...props} />
-                        </View>
+    onclick = () => {
+        props.navigation.navigate('Home');
+    }
+    return (
+        <View>
+            <View style={styles.header}>
+                <View style={styles.zonaLogo}>
+                    <View style={{ width: '18%' }}>
+                        <TouchableOpacity onPress={this.onclick} style={styles.touchable}>
+                            <Image source={require('../../resources/img_logo_header.png')} style={styles.imgHeader} />
+                        </TouchableOpacity>
                     </View>
-     
+                    <View style={{ width: '70%' }}>
+                        <Header {...props} />
+                    </View>
                 </View>
-                
+    
             </View>
-        )
+            
+        </View>
+    )
     }
 
 
@@ -37,7 +40,7 @@ const styles = StyleSheet.create({
     imgHeader:
         { width: '100%', height: '100%', maxWidth: 50, maxHeight: 50, marginLeft: 4 },
     zonaLogo:
-        { width: '100%', flexDirection: 'row', height: '100%', alignItems: 'center', alignContent: 'center' },
+        { width: '100%', flexDirection: 'row', height: '100%', alignItems: 'center', alignContent: 'center', marginLeft: 5 },
     texto:
         { color: 'white', fontSize: Platform.OS === 'ios' ? 15  : 15.3 }
 })
