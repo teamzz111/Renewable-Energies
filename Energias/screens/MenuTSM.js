@@ -11,18 +11,18 @@ export default class HomeScreen extends React.Component  {
     this.state = {
       date: new Date(),
       diasSumados: [0, 31, 59,90,120,151,181,212,242,273,303,334],
-      date2: "2019-02-2",
-      date3: "22:00",
+      date2: "2019-10-31",
+      date3: "13:00",
       languague: "",
       place:  false,
-      coord: false,
-      latlot: true,
-      selected:  true,
+      coord: true,
+      latlot: false,
+      selected:  false,
       renderOption: false,
-      x: "", 
-      y: "",
-      z: "",
-      latitud: "",
+      x: "111", 
+      y: "57",
+      z: "40",
+      latitud: "105",
       longitud: "",
       TSV: ""
     }
@@ -186,17 +186,14 @@ export default class HomeScreen extends React.Component  {
             <TextInput
               keyboardType = 'numeric'
               style={styles.inputCoord}
-              onChangeText={(text) => this.setState({z: text})}
-              value={this.state.z}
+              onChangeText={(text) => this.setState({latitud: text})}
+              value={this.state.latitud}
               />
           </View>
           
           <TouchableNativeFeedback
               onPress = {
-                () => this.setState({
-                  latlot: true,
-                  renderOption: false
-                })
+                () => this.TSV(1)
               }
               background={TouchableNativeFeedback.SelectableBackground()}>
               <View style={styles.calc}>
@@ -317,9 +314,17 @@ export default class HomeScreen extends React.Component  {
           },
         );
     } else {
+      //Basic calc 
+
+      let splited = this.state.date2.split("-");
+      let dia = this.diaAno(splited[2], splited[1]);
+      splited = this.state.date3.split(":");
+      let hora = Number(splited[0]);
+      let minutos = Number(splited[1]);
+
 
       switch (option) {
-        case 0:
+        case 0:{
           if(this.state.latitud == "" || this.state.longitud == ""){
             Alert.alert(
               'Atención',
@@ -330,18 +335,38 @@ export default class HomeScreen extends React.Component  {
               }, ], {
                 cancelable: false
               },
-            );
-          }
-          let splited = this.state.date2.split("-");
-          let dia = this.diaAno(splited[2], splited[1]);
-          let latitud = Number(this.state.latitud);
-          let longitud = Number(this.state.longitud);
-          splited = this.state.date3.split(":");
-          let hora = Number(splited[0]);
-          let minutos = Number(splited[1]);
-          this.setState({TSV: this.minAHora(this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos)))})
-
-        break;
+              );
+            } else{              
+              let latitud = Number(this.state.latitud);
+              let longitud = Number(this.state.longitud);
+              
+              this.setState({TSV: this.minAHora(this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos)))});
+             
+            }
+            break;
+        }
+        case 1:{
+          if (this.state.x == "" || this.state.y == "" || this.state.z == "" || this.state.latitud == "") {
+            Alert.alert(
+              'Atención',
+              'Hay campos vacíos en las coordenadas',
+              [{
+                text: 'Entendido',
+                onPress: () => console.log('OK Pressed')
+              }, ], {
+                cancelable: false
+              },
+              );
+            } else {
+              let t1 = Number(this.state.x);
+              let t2 = Number(this.state.y);
+              let t3 = Number(this.state.z);
+              let longitud = (t1 + (t2 / 60) + (t3 / 3600)).toFixed(2);
+              let latitud = Number(this.state.latitud);
+              this.setState({TSV: this.minAHora(this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos)))});
+            }
+            break;
+        } 
         
         default:
         break;
@@ -358,6 +383,7 @@ export default class HomeScreen extends React.Component  {
         {this.renderOptions()}
         {this.renderPlace()}
         {this.renderResultado()}
+        
         <View style = {styles.datepicker}>
           <Text style = {styles.text}></Text>
         </View>
@@ -395,7 +421,7 @@ const styles = StyleSheet.create({
     width: 220, height: 46, backgroundColor: 'red', marginTop: 12, padding: 10
   },
   inputCoord:{
-    height: 42, width: 50, borderColor: 'black', borderWidth: 0, borderBottomWidth: 1, fontSize: 22, textAlign: 'center', textAlignVertical: 'bottom'
+    height: 42, width: 80, padding: 10, borderColor: 'black', borderWidth: 0, borderBottomWidth: 1, fontSize: 22, textAlign: 'center', textAlignVertical: 'bottom'
   },
   labelTextInputCoord:{
     fontSize: 30, marginTop: -2, color: 'black'
