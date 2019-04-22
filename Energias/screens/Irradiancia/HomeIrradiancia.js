@@ -9,9 +9,9 @@ export default class HomeScreen extends React.Component  {
     super(props);
     this.state = {
         users: [{
-          title: "Irradiancia Difusa ",
-          description: "Calculadora que se encarga de hallar la irradiancia difusa.",
-          route: 0
+          title: "Irradiancia Total ",
+          description: "Calculadora que se encarga de hallar la irradiancia total.",
+          route: 3
         },{
           title: "Irradiancia Directa ",
           description: "Calculadora que se encarga de hallar la irradiancia directa.",
@@ -20,6 +20,11 @@ export default class HomeScreen extends React.Component  {
           title: "Irradiancia Reflejada",
           description: "Calculadora que se encarga de hallar la irradiancia reflejada.",
           route: 2
+        },
+        {
+          title: "Irradiancia Difusa ",
+          description: "Calculadora que se encarga de hallar la irradiancia difusa.",
+          route: 0
         }]
     };
   }
@@ -27,8 +32,8 @@ export default class HomeScreen extends React.Component  {
 
   onClickPut = (id) => {
     switch(id){
-      case 0:{
-        
+      case 3:{
+          this.props.navigation.push("IrradianciaTotal");
         break;
       }
     }
@@ -44,7 +49,7 @@ export default class HomeScreen extends React.Component  {
           renderItem={({item}) =>
             <TouchableOpacity onPress={(id) => this.onClickPut(item.route)}>
               <View style={styles.flatview}>
-                  <Image style={styles.img} source={require('../resources/panelsolar.png')} />
+                  <Image style={styles.img} source={require('../../resources/panelsolar.png')} />
                   <View style = {styles.father}>  
                     <Text style={styles.name}>{item.title}</Text>
                     <Text style={styles.email}>{item.description}</Text>
