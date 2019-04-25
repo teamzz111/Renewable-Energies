@@ -11,18 +11,18 @@ export default class HomeScreen extends React.Component  {
     this.state = {
       date: new Date(),
       diasSumados: [0, 31, 59,90,120,151,181,212,242,273,303,334],
-      date2: "2019-10-31",
-      date3: "13:00",
+      date2: "",
+      date3: "",
       languague: "",
       place:  false,
-      coord: true,
+      coord: false,
       latlot: false,
       selected:  false,
-      renderOption: false,
-      x: "111", 
-      y: "57",
-      z: "40",
-      latitud: "105",
+      renderOption: true,
+      x: "", 
+      y: "",
+      z: "",
+      latitud: "",
       longitud: "",
       TSV: ""
     }
@@ -238,7 +238,7 @@ export default class HomeScreen extends React.Component  {
   }
 
   renderResultado = () => {
-    if(this.state.TSV != ""){
+    if(this.state.TSV != "" && !this.state.renderOption){
 
       return (
         <View style = {{flex: 1, alignItems: 'center', marginTop: 20}}>

@@ -436,8 +436,8 @@ export default class HomeScreen extends React.Component  {
         {this.renderRefreshButton()}
         {this.renderOptions()}
         {this.renderPlace()}
-        {this.renderResultado()}
         {this.irradiancia()}
+        {this.renderResultado()}
 
       </ScrollView>
     );
