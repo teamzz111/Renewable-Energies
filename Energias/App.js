@@ -7,6 +7,8 @@ import CmpHeader from "./screens/staticComponent/Header";
 import MenuTSM from "./screens/MenuTSM";
 import MenuIrra from "./screens/Irradiancia/HomeIrradiancia";
 import IrraTotal from "./screens/Irradiancia/IrradianciaTotal";
+import Declina from "./screens/Declinacion";
+
 const AppNavigator = createStackNavigator(
   {
     Home: {
@@ -36,9 +38,17 @@ const AppNavigator = createStackNavigator(
             title: "IRRADIANCIA TOTAL",
           }),
     },
+      Declinacion:{
+      screen: Declina,
+          navigationOptions: ({
+            navigation
+          }) => ({
+            title: "DECLINACIÓN",
+          }),
+    },
   },
   { // Se establece n los parametros para la pila de pantallas
-    initialRouteName: "IrradianciaTotal", // Ruta inicial (pantalla inicio por defecto)
+    initialRouteName: "Home", // Ruta inicial (pantalla inicio por defecto)
     defaultNavigationOptions: {
       header: props => <CmpHeader {...props} />,
       title: "SELECCIONE UNA OPCIÓN",
