@@ -109,7 +109,7 @@ export default class HomeScreen extends React.Component {
   }
 
   correccionL = (lat, lon) => {
-      return CL = 4 * (lat - lon);
+      return CL = 4 * (60 - lon);
   }
 
   toRadians = (angle) => {
@@ -188,6 +188,8 @@ export default class HomeScreen extends React.Component {
         />
       </View>);
   }
+
+  //UTC
   correccionL = (lat, lon) => {
       let CL = 4 * (Number(lat) - Number(lon));
       return CL;

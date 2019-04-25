@@ -11,8 +11,8 @@ export default class HomeScreen extends React.Component  {
     this.state = {
       date: new Date(),
       diasSumados: [0, 31, 59,90,120,151,181,212,242,273,303,334],
-      date2: "",
-      date3: "",
+      date2: "21-02-2019",
+      date3: "14:00",
       languague: "",
       place:  false,
       coord: false,
@@ -22,8 +22,8 @@ export default class HomeScreen extends React.Component  {
       x: "", 
       y: "",
       z: "",
-      latitud: "",
-      longitud: "",
+      latitud: "42.36",
+      longitud: "71.06",
       TSV: ""
     }
   }
@@ -282,9 +282,9 @@ export default class HomeScreen extends React.Component  {
   horaAMin = (hora, minuto) =>{
     return hora * 60 + minuto;
   } 
-
+  // Añadir UTC 
   correccionL = (lat, lon) => {
-    return CL = 4 * (lat - lon);
+    return CL = 4 * (60 - lon);
   }
 
   toRadians = (angle) =>{
@@ -339,7 +339,8 @@ export default class HomeScreen extends React.Component  {
             } else{              
               let latitud = Number(this.state.latitud);
               let longitud = Number(this.state.longitud);
-              
+              console.warn(this.EcuacionTiempo(this.calculo_D(dia)))
+
               this.setState({TSV: this.minAHora(this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos)))});
              
             }
@@ -363,6 +364,7 @@ export default class HomeScreen extends React.Component  {
               let t3 = Number(this.state.z);
               let longitud = (t1 + (t2 / 60) + (t3 / 3600)).toFixed(2);
               let latitud = Number(this.state.latitud);
+              
               this.setState({TSV: this.minAHora(this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos)))});
             }
             break;

@@ -76,9 +76,9 @@ export default class HomeScreen extends React.Component {
 
     );
   }
-
+  //corrección de longitud con UTC, aplicar.
   correccionL = (lat, lon) => {
-      let CL = 4 * (Number(lat) - Number(lon));
+      let CL = 4 * (60 - Number(lon));
       this.setState({result: CL});
   }
   
