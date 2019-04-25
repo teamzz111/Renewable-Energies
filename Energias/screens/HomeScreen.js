@@ -72,10 +72,19 @@ export default class HomeScreen extends React.Component  {
         this.props.navigation.push('IrradianciaMenu');
         break;
       }
+      case 2:{
+        this.props.navigation.push('correcion');
+        break;
+      }
+      case 3:{
+        this.props.navigation.push('angulo');
+        break;
+      }
       case 5:{
         this.props.navigation.push("Declinacion");
         break;
       }
+
     }
   
   };

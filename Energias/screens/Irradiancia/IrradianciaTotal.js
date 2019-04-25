@@ -11,22 +11,27 @@ export default class HomeScreen extends React.Component  {
     this.state = {
       date: new Date(),
       diasSumados: [0, 31, 59,90,120,151,181,212,242,273,303,334],
-      date2: "2019-10-31",
-      date3: "13:00",
+      date2: "",
+      date3: "",
       languague: "",
       place:  false,
       coord: false,
       latlot: false,
       selected:  false,
       renderOption: true,
-      x: "111", 
-      y: "57",
-      z: "40",
-      latitud: "105",
+      x: "", 
+      y: "",
+      z: "",
+      latitud: "",
       longitud: "",
       TSV: "",
       elevacion: "",
-      inclinacion: ""
+      inclinacion: "",
+      irraTotal: "",
+      material: "0.2",
+      IS: "",
+      ID: "",
+      IR: ""
     }
   }
 
@@ -240,6 +245,28 @@ export default class HomeScreen extends React.Component  {
               TSV:
               {this.state.TSV}
             </Text>
+            <Text style = {styles.textResultado}>
+              Irradiación total:
+              {this.state.irraTotal}
+            </Text>
+            <Text style = {styles.textResultado}>
+              Irradiación incidente:
+              {this.state.IS}
+            </Text>
+            <Text style = {styles.textResultado}>
+              Irradiación directa:
+              {this.state.ID}
+            </Text>
+            <Text style = {styles.textResultado}>
+              Irradiación reflejada:
+              {this.state.IR}
+            </Text>
+            
+            <Text style = {styles.textResultado}>
+              Material:
+              {this.state.material}
+            </Text>
+
         </View>
       </View>
     );
@@ -250,7 +277,7 @@ export default class HomeScreen extends React.Component  {
 
   irradiancia = () => {
       return(
-        <View style = {styles.datepicker}>
+        <View style = {styles.datepicker}>{/*
           <Text style = {styles.text}>¿Está enfrentado a?</Text>
             <Picker
                 selectedValue={this.state.language}
@@ -260,8 +287,8 @@ export default class HomeScreen extends React.Component  {
                 }>
                 <Picker.Item label="Norte" value="1" />
                 <Picker.Item label="Sur" value="2" />
-            </Picker>
-            <Text style = {styles.text}>¿Tiene una elevación de (metros)?</Text>
+              </Picker>*/}
+            <Text style = {styles.text}>¿Tiene una elevación de (Kilometros)?</Text>
             <TextInput
               style={styles.inputLat}
               onChangeText={(text) => this.setState({elevacion: text})}
@@ -271,15 +298,15 @@ export default class HomeScreen extends React.Component  {
               />
               <Text style = {styles.text}>¿De qué está rodeado?</Text>
                 <Picker
-                selectedValue={this.state.language}
+                selectedValue={this.state.material}
                 style={{ height: 50, width: 200 }}
                 onValueChange={(itemValue, itemIndex) =>
-                this.setState({ language: itemValue })
+                this.setState({ material: itemValue })
                 }>
-                <Picker.Item label="Césped" value="1" />
-                <Picker.Item label="Nieve" value="2" />
-                <Picker.Item label="Cemento" value="23" />
-                <Picker.Item label="Grava" value="2" />
+                <Picker.Item label="Césped, tierra" value="0.2" />
+                <Picker.Item label="Nieve" value="0.8" />
+                <Picker.Item label="Concreto" value="0.3" />
+                <Picker.Item label="Grava" value="0.15" />
             </Picker>
             <Text style = {styles.text}>Inclinación del sistema</Text>
              <View style = {{flex: 1, flexDirection: "row", marginTop: 20}}>
@@ -294,7 +321,7 @@ export default class HomeScreen extends React.Component  {
 
             <TouchableNativeFeedback
               onPress = {
-                () => this.TSV(0)
+                () => this.TSV()
               }
               background={TouchableNativeFeedback.SelectableBackground()}>
               <View style={styles.calc}>
@@ -345,6 +372,10 @@ export default class HomeScreen extends React.Component  {
     return (Math.PI * angle) / 180;
   }
 
+  toGrad = (radians) =>{
+    return (radians) * 180 / Math.PI;
+  }
+
   EcuacionTiempo = (D) =>{
     return (9.87 * Math.sin(this.toRadians(2 * D))) - (7.57 * Math.cos(this.toRadians(D))) - (1.5 * Math.sin(this.toRadians(D)));
   }
@@ -352,8 +383,165 @@ export default class HomeScreen extends React.Component  {
   calcTSV = (CL, Et, Hora) =>{
     return Hora + CL + Et;
   }
+  Declinacion = (dia) =>
+  {
+    return Number(23.45 * Math.sin(this.toRadians((360 / 365) * (284 + dia))));
+  }
 
-  TSV = (option) =>{
+  IDN = (elevacion,latitud,longitud,minutos,hora,dia) =>
+  {
+    let p = 0-Math.pow(Math.E,(-0.1184*elevacion));
+    return Number(this.A(dia)*Math.pow(Math.E,(p*(this.B(dia)/this.senB(latitud,this.Declinacion(dia),this.h(latitud, longitud, dia, hora, minutos))))));
+  }
+  senB = (latitud, declinacion, h) =>{
+    return Number((Math.cos(this.toRadians(latitud)) * Math.cos(this.toRadians(h)) * Math.cos(this.toRadians(declinacion))) + (Math.sin(this.toRadians(latitud)) * Math.sin(this.toRadians(declinacion))));
+  }
+  //IRRADIACIÓN DIRECTA
+  ID= (elevacion,latitud,longitud,minutos,hora,dia,declinacion,h,B2) =>
+  {
+       let SENB = this.senB(latitud,declinacion,h);
+       let t = SENB * Math.cos(this.toRadians(B2)) + Math.cos(this.toRadians(Math.asin(this.toRadians(SENB)))) * Math.sin(this.toRadians(B2)) * Math.cos(this.toRadians(Math.asin(this.toRadians(SENB)) - B2));
+       return this.IDN(elevacion,latitud,longitud,minutos,hora,dia)*t;
+  }
+  //Incidente, B2 es inclinación
+  IS = (elevacion, latitud, longitud, minutos, hora, dia, B2) =>
+  {
+    return this.C(dia) * this.IDN(elevacion, latitud, longitud, minutos, hora, dia) * ((1 + Math.cos(this.toRadians(B2))) / 2);
+  }
+
+  A = (dia) => {
+    if (dia >= 5 && dia < 36)
+      return 1230;
+
+    if (dia >= 36 && dia < 67)
+      return 1215;
+
+    if (dia >= 67 && dia < 98)
+      return 1186;
+
+    if (dia >= 98 && dia < 129)
+      return 1136;
+
+    if (dia >= 129 && dia < 160)
+      return 1104;
+
+    if (dia >= 160 && dia < 191)
+      return 1088;
+
+    if (dia >= 191 && dia < 222)
+      return 1085;
+
+    if (dia >= 222 && dia < 253)
+      return 1107;
+
+    if (dia >= 253 && dia < 284)
+      return 1152;
+
+    if (dia >= 284 && dia < 315)
+      return 1193;
+
+    if (dia >= 315 && dia < 346)
+      return 1221;
+
+    if (dia >= 377 || dia < 5)
+      return 1234;
+  }
+
+  B = (dia) => {
+
+    if (dia >= 5 && dia < 36)
+      return 0.142;
+
+    if (dia >= 36 && dia < 67)
+      return 0.144;
+
+    if (dia >= 67 && dia < 98)
+      return 0.156;
+
+    if (dia >= 98 && dia < 129)
+      return 0.180;
+
+    if (dia >= 129 && dia < 160)
+      return 0.196;
+
+    if (dia >= 160 && dia < 191)
+      return 0.205;
+
+    if (dia >= 191 && dia < 222)
+      return 0.207;
+
+    if (dia >= 222 && dia < 253)
+      return 0.201;
+
+    if (dia >= 253 && dia < 284)
+      return 0.177;
+
+    if (dia >= 284 && dia < 315)
+      return 0.160;
+
+    if (dia >= 315 && dia < 346)
+      return 0.149;
+
+    if (dia >= 377 || dia < 5)
+      return 0.142;
+  }
+
+  C = (dia) => {
+    if (dia >= 5 && dia < 36)
+      return 0.058;
+
+    if (dia >= 36 && dia < 67)
+      return 0.060;
+
+    if (dia >= 67 && dia < 98)
+      return 0.071;
+
+    if (dia >= 98 && dia < 129)
+      return 0.097;
+
+    if (dia >= 129 && dia < 160)
+      return 0.121;
+
+    if (dia >= 160 && dia < 191)
+      return 0.134;
+
+    if (dia >= 191 && dia < 222)
+      return 0.136;
+
+    if (dia >= 222 && dia < 253)
+      return 0.122;
+
+    if (dia >= 253 && dia < 284)
+      return 0.092;
+
+    if (dia >= 284 && dia < 315)
+      return 0.073;
+
+    if (dia >= 315 && dia < 346)
+      return 0.063;
+
+    if (dia >= 377 || dia < 5)
+      return 0.057;
+  }
+  //Irrafiación reflejada.
+  IR = (elevacion,latitud,longitud,minutos,hora,dia,B2) =>
+  {
+    return this.IDN(elevacion,latitud,longitud,minutos,hora,dia)*Number(this.state.material)*this.C(dia)+this.senB(latitud,this.Declinacion(dia),this.h(latitud, longitud, dia, hora, minutos)*(1+Math.cos(B2))/2)
+  }
+  h = (latitud, longitud, dia, hora, minutos) => {
+     return Number(((this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos))) - 720) / 4);
+  }
+  
+  TSV = () =>{
+    let option;
+    if(this.state.place){
+      option = 2;
+    } else if(this.state.coord){
+      option = 1;
+    } else if(this.state.latlot){
+      option = 0;
+    }
+
     if(this.state.date2 == "" || this.state.date3 == ""){
         Alert.alert(
           'Atención',
@@ -417,6 +605,7 @@ export default class HomeScreen extends React.Component  {
               let t3 = Number(this.state.z);
               let longitud = (t1 + (t2 / 60) + (t3 / 3600)).toFixed(2);
               let latitud = Number(this.state.latitud);
+              this.setState({longitud: longitud});
               this.setState({TSV: this.minAHora(this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos)))});
             }
             break;
@@ -425,6 +614,13 @@ export default class HomeScreen extends React.Component  {
         default:
         break;
       }
+      this.setState({IS: this.IS(Number(this.state.elevacion), Number(this.state.latitud), this.state.longitud, Number(minutos), Number(hora), dia, Number(this.state.inclinacion))});
+      this.setState({
+        IR: this.IR(Number(this.state.elevacion), Number(this.state.latitud), Number(this.state.longitud), minutos, hora, dia, Number(this.state.inclinacion))
+      });
+      this.setState({ID: this.ID(Number(this.state.elevacion), Number(this.state.latitud), Number(this.state.longitud), minutos, hora, dia, this.Declinacion(dia), this.h(Number(this.state.latitud), Number(this.state.longitud), dia, hora, minutos) )})
+      this.setState({irraTotal: (Number(this.state.IS) + Number(this.state.ID) + Number(this.state.IR)) });
+
     } 
   }
 

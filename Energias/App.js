@@ -8,6 +8,8 @@ import MenuTSM from "./screens/MenuTSM";
 import MenuIrra from "./screens/Irradiancia/HomeIrradiancia";
 import IrraTotal from "./screens/Irradiancia/IrradianciaTotal";
 import Declina from "./screens/Declinacion";
+import correcion from "./screens/CorrecionLongitud";
+import angulo from "./screens/angulohorario";
 
 const AppNavigator = createStackNavigator(
   {
@@ -46,9 +48,25 @@ const AppNavigator = createStackNavigator(
             title: "DECLINACIÓN",
           }),
     },
+      correcion:{
+      screen: correcion,
+          navigationOptions: ({
+            navigation
+          }) => ({
+            title: "CORRECCIÓN POR LONGITUD",
+          }),
+    },
+    angulo:{
+      screen: angulo,
+          navigationOptions: ({
+            navigation
+          }) => ({
+            title: "ÁNGULO HORARIO",
+          }),
+    },
   },
   { // Se establece n los parametros para la pila de pantallas
-    initialRouteName: "Home", // Ruta inicial (pantalla inicio por defecto)
+    initialRouteName: "angulo", // Ruta inicial (pantalla inicio por defecto)
     defaultNavigationOptions: {
       header: props => <CmpHeader {...props} />,
       title: "SELECCIONE UNA OPCIÓN",
