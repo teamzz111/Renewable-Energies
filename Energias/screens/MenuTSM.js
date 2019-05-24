@@ -1,7 +1,7 @@
 import React, {} from 'react';
 import { Text, View, Picker, StyleSheet, TouchableNativeFeedback, TextInput, Image,TouchableHighlight, ScrollView, Alert} from 'react-native';
-import DatePicker from 'react-native-datepicker'
-
+import DatePicker from 'react-native-datepicker';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 
 export default class HomeScreen extends React.Component  {
   
@@ -82,7 +82,9 @@ export default class HomeScreen extends React.Component  {
 
   calendarComponent = () => {
     return (
+
       <View style = {styles.datepicker}>     
+  
         <DatePicker
           style={{width: 200}}
           date={this.state.date2}
@@ -143,15 +145,18 @@ export default class HomeScreen extends React.Component  {
       return(
         <View style = {styles.datepicker}> 
           <Text style={styles.text}> Bien.. Buena decisión, selecciona el lugar </Text>
-          <Picker
-            selectedValue={this.state.language}
-            style={{ height: 50, width: 200 }}
-            onValueChange={(itemValue, itemIndex) =>
-              this.setState({ language: itemValue })
-            }>
-            <Picker.Item label="Bogotá" value="java" />
-            <Picker.Item label="Santiago de Chile" value="js" />
-          </Picker>
+              <View style={styles.container2}>
+     <MapView
+       provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+       region={{
+         latitude: 37.78825,
+         longitude: -122.4324,
+         latitudeDelta: 0.015,
+         longitudeDelta: 0.0121,
+       }}
+     >
+     </MapView>
+   </View>
         </View>);
     } else if(this.state.coord){
 
@@ -445,5 +450,15 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingBottom: 20,
     borderColor: "rgba(0,0,0,0.5)"
-  }
+  },
+   container2: {
+       height: 400,
+       width: 400,
+       justifyContent: 'flex-end',
+       alignItems: 'center',
+     },
+     map: {
+       ...StyleSheet.absoluteFillObject,
+     },
+   
 });
