@@ -66,7 +66,7 @@ const AppNavigator = createStackNavigator(
     },
   },
   { // Se establece n los parametros para la pila de pantallas
-    initialRouteName: "Home", // Ruta inicial (pantalla inicio por defecto)
+    initialRouteName: "TSM", // Ruta inicial (pantalla inicio por defecto)
     defaultNavigationOptions: {
       header: props => <CmpHeader {...props} />,
       title: "SELECCIONE UNA OPCIÓN",

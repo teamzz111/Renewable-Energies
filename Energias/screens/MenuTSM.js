@@ -11,8 +11,8 @@ export default class HomeScreen extends React.Component  {
     this.state = {
       date: new Date(),
       diasSumados: [0, 31, 59,90,120,151,181,212,242,273,303,334],
-      date2: "21-02-2019",
-      date3: "14:00",
+      date2: "2019-01-22",
+      date3: "12:00",
       languague: "",
       place:  false,
       coord: false,
@@ -22,11 +22,28 @@ export default class HomeScreen extends React.Component  {
       x: "", 
       y: "",
       z: "",
-      latitud: "42.36",
-      longitud: "71.06",
+      latitud: "90",
+      longitud: "100.18",
       TSV: ""
     }
   }
+  getInitialState() {
+    return {
+      region: {
+        latitude: 37.78825,
+        longitude: -122.4324,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      },
+    };
+  }
+
+  onRegionChange(region) {
+    this.setState({
+      region
+    });
+  }
+
   renderOptions = () => {
     if(this.state.renderOption){
       return (          
@@ -146,17 +163,8 @@ export default class HomeScreen extends React.Component  {
         <View style = {styles.datepicker}> 
           <Text style={styles.text}> Bien.. Buena decisión, selecciona el lugar </Text>
               <View style={styles.container2}>
-     <MapView
-       provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-       region={{
-         latitude: 37.78825,
-         longitude: -122.4324,
-         latitudeDelta: 0.015,
-         longitudeDelta: 0.0121,
-       }}
-     >
-     </MapView>
-   </View>
+
+  </View>
         </View>);
     } else if(this.state.coord){
 
@@ -289,7 +297,7 @@ export default class HomeScreen extends React.Component  {
   } 
   // Añadir UTC 
   correccionL = (lat, lon) => {
-    return CL = 4 * (60 - lon);
+    return  4 * (lat - lon);
   }
 
   toRadians = (angle) =>{
@@ -303,7 +311,20 @@ export default class HomeScreen extends React.Component  {
   calcTSV = (CL, Et, Hora) =>{
     return Hora + CL + Et;
   }
+  tsv(T, Ls, Le, N) {
+    var d = ((N - 81) * 360) / 365
+    var et = 9.87 * Math.sin((2 * d) * (Math.PI / 180)) - 7.57 * Math.cos(d * (Math.PI / 180)) - 1.5 * Math.sin(d * (Math.PI / 180))
+    console.warn(d);
+    console.warn(et);
+    return T + 4 * (Ls - Le) + et;
 
+  }
+
+  calcLs = (Ls) =>{
+    let t = Math.round(Ls / 15);
+    let positive = [0, 15,30,45,60,75,90,105,120,135,150,165,180];
+    return positive[Math.abs(t)];
+  }
   TSV = (option) =>{
     if(this.state.date2 == "" || this.state.date3 == ""){
         Alert.alert(
@@ -344,10 +365,13 @@ export default class HomeScreen extends React.Component  {
             } else{              
               let latitud = Number(this.state.latitud);
               let longitud = Number(this.state.longitud);
-              console.warn(this.EcuacionTiempo(this.calculo_D(dia)))
 
-              this.setState({TSV: this.minAHora(this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos)))});
-             
+               this.setState({
+                 TSV: this.minAHora(this.tsv(this.horaAMin(hora, minutos), longitud, this.calcLs(longitud), this.EcuacionTiempo(this.calculo_D(dia))))
+               })
+              /* this.setState({
+                 TSV: this.minAHora(this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos)))
+               });*/
             }
             break;
         }
@@ -369,12 +393,11 @@ export default class HomeScreen extends React.Component  {
               let t3 = Number(this.state.z);
               let longitud = (t1 + (t2 / 60) + (t3 / 3600)).toFixed(2);
               let latitud = Number(this.state.latitud);
-              
+
               this.setState({TSV: this.minAHora(this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos)))});
             }
             break;
         } 
-        
         default:
         break;
       }
@@ -394,7 +417,15 @@ export default class HomeScreen extends React.Component  {
         <View style = {styles.datepicker}>
           <Text style = {styles.text}></Text>
         </View>
-
+    < MapView
+    region = {
+      this.state.region
+    }
+    onRegionChange = {
+      this.onRegionChange
+    }
+    />
+    <Text>asdasdklsda</Text>
       </ScrollView>
     );
   }

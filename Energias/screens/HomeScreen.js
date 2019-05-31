@@ -38,14 +38,14 @@ export default class HomeScreen extends React.Component  {
 }
 
 componentDidMount() {
-  fetch("https://maps.googleapis.com/maps/api/elevation/json?locations=4,-74&key=AIzaSyBFjJcSQF4jyIe4PKW9b6SItv-wDoCP2wU" )
+ /* fetch("https://maps.googleapis.com/maps/api/elevation/json?locations=4,-74&key=AIzaSyBFjJcSQF4jyIe4PKW9b6SItv-wDoCP2wU" )
 
     .then((response) => response.json())
       .then((responseJson) => {
         console.warn(responseJson)
       }).catch((error) => {
         console.error(error);
-      });
+      });*/
 }
   _keyExtractor = (item, index) => item.id;
 
