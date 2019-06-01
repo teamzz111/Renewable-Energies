@@ -23,13 +23,14 @@ export default class HomeScreen extends React.Component  {
       latitud: "42.36",
       longitud: "71.06",
       TSV: "",
-      elevacion: "0.146",
-      inclinacion: "",
+      elevacion: "0.043",
+      inclinacion: "60",
       irraTotal: "",
       material: "0.2",
       IS: "",
       ID: "",
-      IR: ""
+      IR: "",
+      data: ""
     }
   }
 
@@ -390,25 +391,30 @@ export default class HomeScreen extends React.Component  {
     return Number(23.45 * Math.sin(this.toRadians((360 / 365) * (284 + dia))));
   }
 
-  IDN = (elevacion,latitud,longitud,minutos,hora,dia) =>
+IDN(D,Z,SENB)
   {
-    let p = 0-Math.pow(Math.E,(-0.1184*elevacion));
-    return Number(this.A(dia)*Math.pow(Math.E,(p*(this.B(dia)/this.senB(latitud,this.Declinacion(dia),this.h(latitud, longitud, dia, hora, minutos))))));
+    var P= -Math.exp(-0,1184*Z)
+    //console.warn(P)
+    //console.warn(this.A(D) * Math.exp(P * (this.B(D) / SENB)))
+    return this.A(D)*Math.exp(P*(this.B(D)/SENB))
+
   }
-  senB = (latitud, declinacion, h) =>{
-    return Number((Math.cos(this.toRadians(latitud)) * Math.cos(this.toRadians(h)) * Math.cos(this.toRadians(declinacion))) + (Math.sin(this.toRadians(latitud)) * Math.sin(this.toRadians(declinacion))));
+  SENB(TSV, N, L) {
+    let dec = 23.45 * Math.sin(((360 * (284 + N)) / 365) * Math.PI / 180);
+    let h = (TSV - 720) / 4;
+    return Math.cos(L * Math.PI / 180) * Math.cos(h * Math.PI / 180) * Math.cos(dec * Math.PI / 180) + Math.sin(L * Math.PI / 180) * Math.sin(dec * Math.PI / 180)
   }
   //IRRADIACIÓN DIRECTA
-  ID= (elevacion,latitud,longitud,minutos,hora,dia,declinacion,h,B2) =>
+  ID(IDN, SENB, B2)
   {
-       let SENB = this.senB(latitud,declinacion,h);
-       let t = SENB * Math.cos(this.toRadians(B2)) + Math.cos(this.toRadians(Math.asin(this.toRadians(SENB)))) * Math.sin(this.toRadians(B2)) * Math.cos(this.toRadians(Math.asin(this.toRadians(SENB)) - B2));
-       return this.IDN(elevacion,latitud,longitud,minutos,hora,dia)*t;
+    // ¿pOR QUÉ sacas el arcoseno de 43, no existe.
+    //console.warn(SENB * Math.cos(B2 * Math.PI / 180) + Math.cos((Math.asin(SENB)) * Math.PI / 180) * Math.sin(B2 * Math.PI / 180) * Math.cos(((Math.asin(SENB)) - B2) * Math.PI / 180));
+    return SENB * Math.cos(B2 * Math.PI / 180) + Math.cos((Math.asin(SENB)) * Math.PI / 180) * Math.sin(B2 * Math.PI / 180) * Math.cos(((Math.asin(SENB)) - B2) * Math.PI / 180)
   }
   //Incidente, B2 es inclinación
-  IS = (elevacion, latitud, longitud, minutos, hora, dia, B2) =>
+  IS(D, IDN, B2)
   {
-    return this.C(dia) * this.IDN(elevacion, latitud, longitud, minutos, hora, dia) * ((1 + Math.cos(this.toRadians(B2))) / 2);
+    return IDN * this.C(D)*((1 + Math.cos(B2 * Math.PI / 180)) / 2)
   }
 
   A = (dia) => {
@@ -526,12 +532,10 @@ export default class HomeScreen extends React.Component  {
       return 0.057;
   }
   //Irrafiación reflejada.
-  IR = (elevacion,latitud,longitud,minutos,hora,dia,B2) =>
-  {
-    let t = 1 - Math.cos(B2);
-    console.warn(t);
-    return this.IDN(elevacion,latitud,longitud,minutos,hora,dia)*Number(this.state.material)*this.C(dia)+this.senB(latitud,this.Declinacion(dia),this.h(latitud, longitud, dia, hora, minutos)*(1-Math.cos(B2))/2);
-  }
+ IR(P, D, SENB, B2, IDN)
+ {
+    return IDN * P * (this.C(D) + SENB) * ((1 + Math.cos(B2 * Math.PI / 180)) / 2);
+ }
   h = (latitud, longitud, dia, hora, minutos) => {
      return Number(((this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos))) - 720) / 4);
   }
@@ -585,7 +589,7 @@ export default class HomeScreen extends React.Component  {
             } else{              
               let latitud = Number(this.state.latitud);
               let longitud = Number(this.state.longitud);
-              
+                            
               this.setState({TSV: this.minAHora(this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos)))});
              
             }
@@ -619,8 +623,15 @@ export default class HomeScreen extends React.Component  {
         break;
       }
       this.setState({IS: this.IS(Number(this.state.elevacion), Number(this.state.latitud), this.state.longitud, Number(minutos), Number(hora), dia, Number(this.state.inclinacion))});
+      fetch("https://maps.googleapis.com/maps/api/elevation/json?locations=" + this.state.latitud + "," + this.state.longitud + "&key=AIzaSyBFjJcSQF4jyIe4PKW9b6SItv-wDoCP2wU")
+        .then((response) => response.json())
+        .then((responseJson) => {
+          this.data = responseJson.results[0].elevation
+        }).catch((error) => {
+          console.error(error); 
+        });
       this.setState({
-        IR: this.IR(Number(this.state.elevacion), Number(this.state.latitud), Number(this.state.longitud), minutos, hora, dia, Number(this.state.inclinacion))
+        IR: this.IR(this.state.material, dia, this.SENB(this.state.TSV, dia, this.state.latitud), this.state.inclinacion, this.IDN(dia, this.data, this.SENB(this.state.TSV, dia, this.state.latitud)))
       });
       this.setState({ID: this.ID(Number(this.state.elevacion), Number(this.state.latitud), Number(this.state.longitud), minutos, hora, dia, this.Declinacion(dia), this.h(Number(this.state.latitud), Number(this.state.longitud), dia, hora, minutos) )})
       this.setState({irraTotal: (Number(this.state.IS) + Number(this.state.ID) + Number(this.state.IR)) });

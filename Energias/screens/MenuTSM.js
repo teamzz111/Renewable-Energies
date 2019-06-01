@@ -1,8 +1,14 @@
 import React, {} from 'react';
-import { Text, View, Picker, StyleSheet, TouchableNativeFeedback, TextInput, Image,TouchableHighlight, ScrollView, Alert} from 'react-native';
+import { Text, View, Picker, StyleSheet, TouchableNativeFeedback, TextInput, Image,TouchableHighlight, ScrollView, Alert, Dimensions} from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-
+const { width, height } = Dimensions.get('window');
+const ASPECT_RATIO    = (width / height) * 50;
+const LATITUDE = 4.60971025;
+const LONGITUDE = -74.081749;
+const LATITUDE_DELTA  = 0.0122;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+const SPACE           = 0.01;
 export default class HomeScreen extends React.Component  {
   
   
@@ -24,24 +30,20 @@ export default class HomeScreen extends React.Component  {
       z: "",
       latitud: "90",
       longitud: "100.18",
-      TSV: ""
+      TSV: "",
+     region: {
+       latitude: LATITUDE,
+       longitude: LONGITUDE,
+       latitudeDelta: LATITUDE_DELTA,
+       longitudeDelta: LONGITUDE_DELTA
+     },
+     testing:""
     }
   }
-  getInitialState() {
-    return {
-      region: {
-        latitude: 37.78825,
-        longitude: -122.4324,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      },
-    };
-  }
 
-  onRegionChange(region) {
-    this.setState({
-      region
-    });
+
+  onRegionChange(coordinate, position) {
+    console.warn(coordinate);
   }
 
   renderOptions = () => {
@@ -162,9 +164,20 @@ export default class HomeScreen extends React.Component  {
       return(
         <View style = {styles.datepicker}> 
           <Text style={styles.text}> Bien.. Buena decisión, selecciona el lugar </Text>
-              <View style={styles.container2}>
+            <View>
+              <Text value = {this.state.testing}></Text>
+            </View>
+              <MapView
+                region = {this.state.region}
+                showsUserLocation={true}
+                followUserLocation={true}
+                style = {styles.map}
+                onPress = {
+                    value =>
+                  this.setState({testing: value})
+                }
+              />
 
-  </View>
         </View>);
     } else if(this.state.coord){
 
@@ -304,9 +317,9 @@ export default class HomeScreen extends React.Component  {
     return (Math.PI * angle) / 180;
   }
 
-  EcuacionTiempo = (D) =>{
+ /* EcuacionTiempo = (D) =>{
     return (9.87 * Math.sin(this.toRadians(2 * D))) - (7.57 * Math.cos(this.toRadians(D))) - (1.5 * Math.sin(this.toRadians(D)));
-  }
+  }*/
 
   calcTSV = (CL, Et, Hora) =>{
     return Hora + CL + Et;
@@ -314,8 +327,6 @@ export default class HomeScreen extends React.Component  {
   tsv(T, Ls, Le, N) {
     var d = ((N - 81) * 360) / 365
     var et = 9.87 * Math.sin((2 * d) * (Math.PI / 180)) - 7.57 * Math.cos(d * (Math.PI / 180)) - 1.5 * Math.sin(d * (Math.PI / 180))
-    console.warn(d);
-    console.warn(et);
     return T + 4 * (Ls - Le) + et;
 
   }
@@ -417,15 +428,8 @@ export default class HomeScreen extends React.Component  {
         <View style = {styles.datepicker}>
           <Text style = {styles.text}></Text>
         </View>
-    < MapView
-    region = {
-      this.state.region
-    }
-    onRegionChange = {
-      this.onRegionChange
-    }
-    />
-    <Text>asdasdklsda</Text>
+
+
       </ScrollView>
     );
   }
@@ -489,7 +493,7 @@ const styles = StyleSheet.create({
        alignItems: 'center',
      },
      map: {
-       ...StyleSheet.absoluteFillObject,
+       width: width,
+       height: 300
      },
-   
 });
