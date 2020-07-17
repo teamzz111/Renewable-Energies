@@ -9,10 +9,11 @@
   "dependencies": {
     "react": "16.8.3",
     "react-native": "0.59.3",
-    "react-native-date-picker": "^2.3.0",
+    "react-native-date-picker": "^2.4.1",
     "react-native-datepicker": "^1.7.2",
-    "react-native-gesture-handler": "^1.1.0",
-    "react-navigation": "^3.6.1"
+    "react-native-gesture-handler": "^1.2.2",
+    "react-native-maps": "^0.24.2",
+    "react-navigation": "^3.11.0"
   },
   "devDependencies": {
     "@babel/core": "7.4.0",

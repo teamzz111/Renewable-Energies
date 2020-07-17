@@ -1,8 +1,14 @@
 import React, {} from 'react';
-import { Text, View, Picker, StyleSheet, TouchableNativeFeedback, TextInput, Image,TouchableHighlight, ScrollView, Alert} from 'react-native';
-import DatePicker from 'react-native-datepicker'
-
-
+import { Text, View, Picker, StyleSheet, TouchableNativeFeedback, TextInput, Image,TouchableHighlight, ScrollView, Alert, Dimensions} from 'react-native';
+import DatePicker from 'react-native-datepicker';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+const { width, height } = Dimensions.get('window');
+const ASPECT_RATIO    = (width / height) * 50;
+const LATITUDE = 4.60971025;
+const LONGITUDE = -74.081749;
+const LATITUDE_DELTA  = 0.0122;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+const SPACE           = 0.01;
 export default class HomeScreen extends React.Component  {
   
   
@@ -11,8 +17,8 @@ export default class HomeScreen extends React.Component  {
     this.state = {
       date: new Date(),
       diasSumados: [0, 31, 59,90,120,151,181,212,242,273,303,334],
-      date2: "21-02-2019",
-      date3: "14:00",
+      date2: "2019-01-22",
+      date3: "12:00",
       languague: "",
       place:  false,
       coord: false,
@@ -22,11 +28,24 @@ export default class HomeScreen extends React.Component  {
       x: "", 
       y: "",
       z: "",
-      latitud: "42.36",
-      longitud: "71.06",
-      TSV: ""
+      latitud: "90",
+      longitud: "100.18",
+      TSV: "",
+     region: {
+       latitude: LATITUDE,
+       longitude: LONGITUDE,
+       latitudeDelta: LATITUDE_DELTA,
+       longitudeDelta: LONGITUDE_DELTA
+     },
+     testing:""
     }
   }
+
+
+  onRegionChange(coordinate, position) {
+    console.warn(coordinate);
+  }
+
   renderOptions = () => {
     if(this.state.renderOption){
       return (          
@@ -82,7 +101,9 @@ export default class HomeScreen extends React.Component  {
 
   calendarComponent = () => {
     return (
+
       <View style = {styles.datepicker}>     
+  
         <DatePicker
           style={{width: 200}}
           date={this.state.date2}
@@ -143,15 +164,20 @@ export default class HomeScreen extends React.Component  {
       return(
         <View style = {styles.datepicker}> 
           <Text style={styles.text}> Bien.. Buena decisión, selecciona el lugar </Text>
-          <Picker
-            selectedValue={this.state.language}
-            style={{ height: 50, width: 200 }}
-            onValueChange={(itemValue, itemIndex) =>
-              this.setState({ language: itemValue })
-            }>
-            <Picker.Item label="Bogotá" value="java" />
-            <Picker.Item label="Santiago de Chile" value="js" />
-          </Picker>
+            <View>
+              <Text value = {this.state.testing}></Text>
+            </View>
+              <MapView
+                region = {this.state.region}
+                showsUserLocation={true}
+                followUserLocation={true}
+                style = {styles.map}
+                onPress = {
+                    value =>
+                  this.setState({testing: value})
+                }
+              />
+
         </View>);
     } else if(this.state.coord){
 
@@ -284,21 +310,32 @@ export default class HomeScreen extends React.Component  {
   } 
   // Añadir UTC 
   correccionL = (lat, lon) => {
-    return CL = 4 * (60 - lon);
+    return  4 * (lat - lon);
   }
 
   toRadians = (angle) =>{
     return (Math.PI * angle) / 180;
   }
 
-  EcuacionTiempo = (D) =>{
+ /* EcuacionTiempo = (D) =>{
     return (9.87 * Math.sin(this.toRadians(2 * D))) - (7.57 * Math.cos(this.toRadians(D))) - (1.5 * Math.sin(this.toRadians(D)));
-  }
+  }*/
 
   calcTSV = (CL, Et, Hora) =>{
     return Hora + CL + Et;
   }
+  tsv(T, Ls, Le, N) {
+    var d = ((N - 81) * 360) / 365
+    var et = 9.87 * Math.sin((2 * d) * (Math.PI / 180)) - 7.57 * Math.cos(d * (Math.PI / 180)) - 1.5 * Math.sin(d * (Math.PI / 180))
+    return T + 4 * (Ls - Le) + et;
 
+  }
+
+  calcLs = (Ls) =>{
+    let t = Math.round(Ls / 15);
+    let positive = [0, 15,30,45,60,75,90,105,120,135,150,165,180];
+    return positive[Math.abs(t)];
+  }
   TSV = (option) =>{
     if(this.state.date2 == "" || this.state.date3 == ""){
         Alert.alert(
@@ -339,10 +376,13 @@ export default class HomeScreen extends React.Component  {
             } else{              
               let latitud = Number(this.state.latitud);
               let longitud = Number(this.state.longitud);
-              console.warn(this.EcuacionTiempo(this.calculo_D(dia)))
 
-              this.setState({TSV: this.minAHora(this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos)))});
-             
+               this.setState({
+                 TSV: this.minAHora(this.tsv(this.horaAMin(hora, minutos), longitud, this.calcLs(longitud), this.EcuacionTiempo(this.calculo_D(dia))))
+               })
+              /* this.setState({
+                 TSV: this.minAHora(this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos)))
+               });*/
             }
             break;
         }
@@ -364,12 +404,11 @@ export default class HomeScreen extends React.Component  {
               let t3 = Number(this.state.z);
               let longitud = (t1 + (t2 / 60) + (t3 / 3600)).toFixed(2);
               let latitud = Number(this.state.latitud);
-              
+
               this.setState({TSV: this.minAHora(this.calcTSV(this.correccionL(latitud, longitud), this.EcuacionTiempo(this.calculo_D(dia)), this.horaAMin(hora, minutos)))});
             }
             break;
         } 
-        
         default:
         break;
       }
@@ -389,6 +428,7 @@ export default class HomeScreen extends React.Component  {
         <View style = {styles.datepicker}>
           <Text style = {styles.text}></Text>
         </View>
+
 
       </ScrollView>
     );
@@ -445,5 +485,15 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingBottom: 20,
     borderColor: "rgba(0,0,0,0.5)"
-  }
+  },
+   container2: {
+       height: 400,
+       width: 400,
+       justifyContent: 'flex-end',
+       alignItems: 'center',
+     },
+     map: {
+       width: width,
+       height: 300
+     },
 });
