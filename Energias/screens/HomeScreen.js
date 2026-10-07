@@ -38,7 +38,7 @@ export default class HomeScreen extends React.Component  {
 }
 
 componentDidMount() {
- /* fetch("https://maps.googleapis.com/maps/api/elevation/json?locations=4,-74&key=AIzaSyBFjJcSQF4jyIe4PKW9b6SItv-wDoCP2wU" )
+ /* fetch("https://maps.googleapis.com/maps/api/elevation/json?locations=4,-74&key=YOUR_GOOGLE_MAPS_API_KEY" )
 
     .then((response) => response.json())
       .then((responseJson) => {
