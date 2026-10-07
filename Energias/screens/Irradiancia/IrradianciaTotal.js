@@ -623,7 +623,7 @@ IDN(D,Z,SENB)
         break;
       }
       this.setState({IS: this.IS(Number(this.state.elevacion), Number(this.state.latitud), this.state.longitud, Number(minutos), Number(hora), dia, Number(this.state.inclinacion))});
-      fetch("https://maps.googleapis.com/maps/api/elevation/json?locations=" + this.state.latitud + "," + this.state.longitud + "&key=AIzaSyBFjJcSQF4jyIe4PKW9b6SItv-wDoCP2wU")
+      fetch("https://maps.googleapis.com/maps/api/elevation/json?locations=" + this.state.latitud + "," + this.state.longitud + "&key=YOUR_GOOGLE_MAPS_API_KEY")
         .then((response) => response.json())
         .then((responseJson) => {
           this.data = responseJson.results[0].elevation
